@@ -1,4 +1,4 @@
-######lhjdthtedzxujytfvkli########################################@#$!@#$!@#$!@#%@#$%@#$%@#$%@#$%@#$%# ev3dev-curriculum
+######lhjdthtedzxujytfvkli########################################@#$!@#$!@#$!@#%@#$%@#$%@#$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%@#$%@#$%# ev3dev-curriculum
 College curriculum for using ev3dev in a Python programming course.
 ***
 This repository is meant to be used as the starting code for students that are learning to use the Lego EV3 Mindstorms robot + ev3dev with Python.<br><br>
@@ -23,7 +23,6 @@ discussed in the **Background information** section below. Once all the [setup](
   - [Lecture slides](https://drive.google.com/open?id=1mUxsC-cUO4S5bwhTAQG0G10IO0gsbAU5YEORxeh0mMc)
   - [Starting code (link to a specific folder in this repository)](https://github.com/Rosebotics/ev3dev-curriculum/tree/master/sandbox/src/digital_inputs)
   - [Checkoff sheet](https://drive.google.com/open?id=1jrrmd-c1ZuWV1qujV8d-H327HWFmADSCdm9wgafYQ8M)
-
   ### MQTT Communication
   Now it's time to get serious. Use your computer to control the robot from a graphical user interface.
   - [Lecture slides](https://drive.google.com/open?id=1gQt1K4X2xzcspKMn2S0X98vhzVNmLA-xoQe5rp58CVE)
