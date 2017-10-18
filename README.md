@@ -1,4 +1,4 @@
-## ev3dev-curriculum
+##############################################@#$!@#$!@#$!@#%@#$%@#$%@#$%@#$%@#$%# ev3dev-curriculum
 College curriculum for using ev3dev in a Python programming course.
 ***
 This repository is meant to be used as the starting code for students that are learning to use the Lego EV3 Mindstorms robot + ev3dev with Python.<br><br>
