@@ -24,7 +24,7 @@ def main():
     # You are not allowed to make any changes to this code.
     # --------------------------------------------------------------
     print("--------------------------------------------")
-    print(" Turn degrees")
+    print(" m4 Turn degrees")
     print("--------------------------------------------")
     ev3.Sound.speak("Turn degrees nope nope nope nnnnnnnooooooooooooppppppppppppppeeeeeeeeeeee").wait()
     robot = robo.Snatch3r()
@@ -33,7 +33,7 @@ def main():
         turn_speed_sp = int(input("Speed (0 to 900 dps): "))
         if turn_speed_sp == 0:
             break
-        degrees_to_turn = int(input("Distance (inches): "))
+        degrees_to_turn = int(input("Degrees to turn: "))
         if degrees_to_turn == 0:
             break
 
@@ -42,7 +42,7 @@ def main():
 
     print("Goodbye!")
     ev3.Sound.speak("Goodbye").wait()
-    
+
 
 main()
 
