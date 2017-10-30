@@ -21,7 +21,7 @@ Which will probably not require you to type the password since sudo was just run
 
 BTW chvt means CHange the Virtual Terminal, and 86ing something means to kick it out.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
+Authors: David Fisher and Darcy Xie.
 """  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import ev3dev.ev3 as ev3
@@ -67,7 +67,7 @@ def main():
     dc = DataContainer()
 
     display_image(dc.lcd_screen, dc.eyes)  # Display an image on the EV3 screen
-    ev3.Sound.speak("I R events with the Screen").wait()
+    ev3.Sound.speak("boutell i need help pleeeeeeeeeeease boutell boutell boutell").wait()
 
     # TODO: 3. Create a remote control object for channel 1. Add lambda callbacks for:
     #   .on_red_up    to call handle_red_up_1    (that exist already) with state and dc as parameters
@@ -82,15 +82,31 @@ def main():
 
     # Buttons on EV3
     btn = ev3.Button()
+    btn_1=ev3.RemoteControl(channel=1)
+    btn_2=ev3.RemoteControl(channel=2)
+    btn_3=ev3.RemoteControl(channel=3)
+    btn_4=ev3.RemoteControl(channel=4)
+    assert btn_1.connected
+    assert btn_2.connected
+    assert btn_3.connected
+    assert btn_4.connected
     btn.on_backspace = lambda state: handle_shutdown(state, dc)
-
+    btn_1.on_red_up=lambda state: handle_red_up_1(state,dc)
+    btn_1.on_red_down=lambda state: handle_red_down_1(state,dc)
+    btn_1.on_blue_up=lambda state: handle_blue_up_1(state,dc)
+    btn_1.on_blue_down=lambda state: handle_blue_down_1(state,dc)
+    btn_2.on_red_up=lambda state: handle_red_up_2(state,dc)
+    btn_3.on_red_up=lambda state: handle_red_up_3(state,dc)
+    btn_4.on_red_up=lambda state: handle_red_up_4(state,dc)
     while dc.running:
         # TODO: 4. Call the .process() method on your channel 1 RemoveControl object, then review and run your code.
         #   Review the handle functions below to see how they draw to the screen.  They are already finished.
-
+        btn_1.process()
         # TODO: 6. Call the .process() method on your channel 2 - 4 RemoveControl objects and demo your code.
         #   Review the handle functions below to see how they draw to the screen.  They are already finished.
-
+        btn_2.process()
+        btn_3.process()
+        btn_4.process()
         # TODO: 7. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
         #
         # Observations you should make, IR buttons work exactly like buttons on the EV3.

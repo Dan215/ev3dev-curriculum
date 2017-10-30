@@ -26,7 +26,7 @@ def main():
     print("--------------------------------------------")
     print(" m4 Turn degrees")
     print("--------------------------------------------")
-    ev3.Sound.speak("Turn degrees nope nope nope nnnnnnnooooooooooooppppppppppppppeeeeeeeeeeee").wait()
+    ev3.Sound.speak("Turn degrees").wait()
     robot = robo.Snatch3r()
 
     while True:
