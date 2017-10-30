@@ -15,7 +15,7 @@ import ev3dev.ev3 as ev3
 import time
 
 
-# TODO: 2. Have someone on your team run this program, as is, on the EV3 and make sure everyone understands the code.
+# DONE: 2. Have someone on your team run this program, as is, on the EV3 and make sure everyone understands the code.
 # There is currently no way to exit this program, so you will have to manually exit the program using your keyboard.
 #   Hit Control C to exit the program when you are done running it.  Ctrl c is a KeyboardInterrupt.
 # Can you see what the robot does and explain what each line of code is doing? Talk as a group to make sure.
@@ -31,7 +31,7 @@ def main():
     print("--------------------------------------------")
     print(" Button events with sound")
     print("--------------------------------------------")
-    ev3.Sound.speak("Buttons events why why wwwwwwwwwwhhhhhhhhhhhhhhhhhhyyyyyyyyyyyyyy").wait()
+    ev3.Sound.speak("Buttons events why why wwhhhhhyyyyyyyyyyyyyy").wait()
 
     # Beep is a simple and useful sound.
     ev3.Sound.beep().wait()
@@ -91,6 +91,7 @@ def handle_up_button(button_state):
     """Handle IR / button event."""
     if button_state:
         print("Up button is pressed")
+        play_song_by_individual_tones()
     else:
         print("Up button was released");
 
@@ -98,6 +99,7 @@ def handle_up_button(button_state):
 def handle_down_button(button_state):
     if button_state:
         print("Down button is pressed")
+        play_song_by_notes_list()
     else:
         print("Down button was released")
 
@@ -105,6 +107,7 @@ def handle_down_button(button_state):
 def handle_right_button(button_state):
     if button_state:
         print("Right button is pressed")
+        play_wav_file()
     else:
         print("Right button was released")
 
@@ -112,6 +115,7 @@ def handle_right_button(button_state):
 def handle_left_button(button_state):
     if button_state:
         print("Left button is pressed")
+        speak()
     else:
         print("Left button was released")
 
