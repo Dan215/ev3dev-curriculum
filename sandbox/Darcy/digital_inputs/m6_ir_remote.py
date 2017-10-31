@@ -25,8 +25,8 @@
     -- Pressing the Back button will allow your program to end.  It should stop motors, turn on both green LEDs, and
        then print and say Goodbye.  You will need to implement a new robot method called shutdown to handle this task.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and Darcy Xie.
+"""  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import ev3dev.ev3 as ev3
 import time
@@ -34,7 +34,7 @@ import time
 import robot_controller as robo
 
 # Note that todo2 is farther down in the code.  That method needs to be written before you do todo3.
-# TODO: 3. Have someone on your team run this program on the EV3 and make sure everyone understands the code.
+# DONE: 3. Have someone on your team run this program on the EV3 and make sure everyone understands the code.
 # Can you see what the robot does and explain what each line of code is doing? Talk as a group to make sure.
 
 
@@ -52,16 +52,26 @@ def main():
     print(" - Use IR remote channel 2 to for the arm")
     print(" - Press the Back button on EV3 to exit")
     print("--------------------------------------------")
-    ev3.Sound.speak("I R Remote")
+    ev3.Sound.speak("IIIIIII RRRRRRRR Remote boutell why are you doing this to us")
 
     ev3.Leds.all_off()  # Turn the leds off
     robot = robo.Snatch3r()
     dc = DataContainer()
 
-    # TODO: 4. Add the necessary IR handler callbacks as per the instructions above.
+    # DONE 4. Add the necessary IR handler callbacks as per the instructions above.
     # Remote control channel 1 is for driving the crawler tracks around (none of these functions exist yet below).
     # Remote control channel 2 is for moving the arm up and down (all of these functions already exist below).
-
+    btn_1 = ev3.RemoteControl(channel=1)
+    btn_2 = ev3.RemoteControl(channel=2)
+    assert btn_1.connected
+    assert btn_2.connected
+    btn_1.on_red_up=lambda state:left_motor_forward(state, robot)
+    btn_1.on_red_down=lambda state:left_motor_backward(state, robot)
+    btn_1.on_blue_up=lambda state:right_motor_forward(state,robot)
+    btn_1.on_blue_down=lambda state:right_motor_backward(state,robot)
+    btn_2.on_blue_up=lambda state: handle_calibrate_button(state, robot)
+    btn_2.on_red_down=lambda state: handle_arm_down_button(state, robot)
+    btn_2.on_red_up=lambda state: handle_arm_up_button(state, robot)
     # For our standard shutdown button.
     btn = ev3.Button()
     btn.on_backspace = lambda state: handle_shutdown(state, dc)
@@ -71,6 +81,8 @@ def main():
     while dc.running:
         # TODO: 5. Process the RemoteControl objects.
         btn.process()
+        btn_1.process()
+        btn_2.process()
         time.sleep(0.01)
 
     # TODO: 2. Have everyone talk about this problem together then pick one  member to modify libs/robot_controller.py
@@ -86,6 +98,44 @@ def main():
 # Movement event handlers have not been provided.
 # ----------------------------------------------------------------------
 # TODO: 6. Implement the IR handler callbacks handlers.
+def left_motor_forward(button_state,robot):
+    assert robot.left_motor.connected
+    if button_state:
+        robot.left_motor.run_forever(speed_sp=600)
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
+    else:
+        robot.left_motor.stop(stop_action='brake')
+    ev3.Sound.beep()
+
+def left_motor_backward(button_state, robot):
+    assert robot.left_motor.connected
+    if button_state:
+        robot.left_motor.run_forever(speed_sp=-600)
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+    else:
+        robot.left_motor.stop(stop_action='brake')
+    ev3.Sound.beep()
+
+def right_motor_forward(button_state,robot):
+    assert robot.right_motor.connected
+    if button_state:
+        robot.right_motor.run_forever(speed_sp=600)
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
+    else:
+        robot.right_motor.stop(stop_action='brake')
+    ev3.Sound.beep()
+
+def right_motor_backward(button_state, robot):
+    assert robot.right_motor.connected
+    if button_state:
+        robot.right_motor.run_forever(speed_sp=600)
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+    else:
+        robot.right_motor.stop(stop_action='brake')
+    ev3.Sound.beep()
+
+
+
 
 # TODO: 7. When your program is complete, call over a TA or instructor to sign your checkoff sheet and do a code review.
 #
