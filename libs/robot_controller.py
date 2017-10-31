@@ -25,10 +25,12 @@ class Snatch3r(object):
         print('robot init')
         self.left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
         self.right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
-        self.arm_motor = ev3.LargeMotor(ev3.OUTPUT_A)
-        self.touch_sensor = ev3.TouchSensor(ev3.INPUT_1)
+        self.arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
+        self.touch_sensor = ev3.TouchSensor()
         assert self.left_motor.connected
         assert self.right_motor.connected
+        assert self.arm_motor.connected
+        assert self.touch_sensor.connected
 
     def drive_inches(self, inches_target, speed_deg_per_second):
         degrees_per_inch = 90
@@ -89,7 +91,7 @@ class Snatch3r(object):
         ev3.Sound.beep()
         self.arm_motor.position = 0  # Calibrate the down position as 0 (this line is correct as is).
 
-    def arm_up(self, touch_sensor):
+    def arm_up(self):
         """
         Moves the Snatch3r arm to the up position.
 
@@ -106,7 +108,7 @@ class Snatch3r(object):
 
         # Code that attempts to do this task but has many bugs.  Fix them!
         self.arm_motor.run_forever(speed_sp=900)
-        while not touch_sensor.is_pressed:
+        while not self.touch_sensor.is_pressed:
             time.sleep(0.01)
         self.arm_motor.stop(stop_action='brake')
         ev3.Sound.beep()
