@@ -54,6 +54,22 @@ class Snatch3r(object):
             self.drive_inches(edge_length_in,speed_deg_per_second)
             self.turn_degrees(360/number_of_sides,speed_deg_per_second)
 
+    def left_motor_forward(self, left_speed):
+        assert self.left_motor.connected
+        self.left_motor.run_forever(speed_sp=left_speed)
+
+    def left_motor_backward(self, left_speed):
+        assert self.left_motor.connected
+        self.left_motor.run_forever(speed_sp=-left_speed)
+
+    def right_motor_backward(self, right_speed):
+        assert self.left_motor.connected
+        self.left_motor.run_forever(speed_sp=-right_speed)
+
+    def right_motor_forward(self, right_speed):
+        assert self.left_motor.connected
+        self.left_motor.run_forever(speed_sp=right_speed)
+
     def arm_calibration(self):
         """
         Runs the arm up until the touch sensor is hit then back to the bottom again, beeping at both locations.
