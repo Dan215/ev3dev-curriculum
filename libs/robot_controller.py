@@ -31,6 +31,7 @@ class Snatch3r(object):
         assert self.right_motor.connected
         assert self.arm_motor.connected
         assert self.touch_sensor.connected
+        self.running = True
 
     def drive_inches(self, inches_target, speed_deg_per_second):
         degrees_per_inch = 90
@@ -172,5 +173,8 @@ class Snatch3r(object):
         # Modify a variable that will allow the loop_forever method to end. Additionally stop motors and set LEDs green.
         # The most important part of this method is given here, but you should add a bit more to stop motors, etc.
         self.running = False
+        self.right_motor.stop()
+        self.left_motor.stop()
+        self.arm_motor.stop()
 
 
