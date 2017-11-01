@@ -116,7 +116,7 @@ def main():
 # ----------------------------------------------------------------------
 # Tkinter callbacks
 # ----------------------------------------------------------------------
-# TODO: 4. Implement the functions for the drive button callbacks.
+# DONE: 4. Implement the functions for the drive button callbacks.
 
 # TODO: 5. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.  This is the final one!
 #
@@ -136,28 +136,28 @@ def send_down(mqtt_client):
 
 
 def go_forward(mqtt_client, left_speed_entry, right_speed_entry):
-    print("going forward")
-    mqtt_client.send_message("going forward")
+    print("forward")
+    mqtt_client.send_message("forward",[left_speed_entry, right_speed_entry])
 
 
 def go_right(mqtt_client, left_speed_entry, right_speed_entry):
-    print("going right")
-    mqtt_client.send_message("going right")
+    print("right")
+    mqtt_client.send_message("right",[left_speed_entry, right_speed_entry])
 
 
 def stop(mqtt_client, left_speed_entry, right_speed_entry):
-    print("stopping")
-    mqtt_client.send_message("stopping")
+    print("stop")
+    mqtt_client.send_message("stop")
 
 
 def go_left(mqtt_client, left_speed_entry, right_speed_entry):
-    print("going left")
-    mqtt_client.send_message("going left")
+    print("left")
+    mqtt_client.send_message("left",[left_speed_entry, right_speed_entry])
 
 
 def go_backward(mqtt_client, left_speed_entry, right_speed_entry):
-    print("going backward")
-    mqtt_client.send_message("going backward")
+    print("back")
+    mqtt_client.send_message("back",[left_speed_entry, right_speed_entry])
 
 
 # Quit and Exit button callbacks
