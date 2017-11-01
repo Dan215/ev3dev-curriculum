@@ -70,6 +70,10 @@ class Snatch3r(object):
         assert self.left_motor.connected
         self.left_motor.run_forever(speed_sp=right_speed)
 
+    def stop(self):
+        self.left_motor.stop()
+        self.right_motor.stop()
+
     def arm_calibration(self):
         """
         Runs the arm up until the touch sensor is hit then back to the bottom again, beeping at both locations.
