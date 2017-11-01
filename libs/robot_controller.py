@@ -54,21 +54,25 @@ class Snatch3r(object):
             self.drive_inches(edge_length_in,speed_deg_per_second)
             self.turn_degrees(360/number_of_sides,speed_deg_per_second)
 
-    def left_motor_forward(self, left_speed):
-        assert self.left_motor.connected
-        self.left_motor.run_forever(speed_sp=left_speed)
-
-    def left_motor_backward(self, left_speed):
+    def left(self, left_speed, right_speed):
         assert self.left_motor.connected
         self.left_motor.run_forever(speed_sp=-left_speed)
+        self.right_motor.run_forever(speed_sp=right_speed)
 
-    def right_motor_backward(self, right_speed):
+    def right(self, left_speed, right_speed):
         assert self.left_motor.connected
-        self.left_motor.run_forever(speed_sp=-right_speed)
+        self.left_motor.run_forever(speed_sp=left_speed)
+        self.right_motor.run_forever(speed_sp=-right_speed)
 
-    def right_motor_forward(self, right_speed):
+    def back(self, left_speed, right_speed):
         assert self.left_motor.connected
-        self.left_motor.run_forever(speed_sp=right_speed)
+        self.left_motor.run_forever(speed_sp=-left_speed)
+        self.right_motor.run_forever(speed_sp=-right_speed)
+
+    def forward(self, left_speed, right_speed):
+        assert self.left_motor.connected
+        self.left_motor.run_forever(speed_sp=left_speed)
+        self.right_motor.run_forever(speed_sp=right_speed)
 
     def stop(self):
         self.left_motor.stop()
