@@ -12,8 +12,8 @@ f - Follow the line until the touch sensor is pressed.  You are allowed to assum
      Extra - For a harder challenge could you drive on the black line and handle left or right turns?
 q - Quit
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and Alec Sanabria.
+"""  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import ev3dev.ev3 as ev3
 import time
@@ -29,7 +29,7 @@ def main():
 
     # TODO: 4: After running the code set the default white and black levels to a better initial guess.
     #   Once you have the values hardcoded to resonable numbers here you don't really need the w and b commands below.
-    white_level = 50
+    white_level = 60
     black_level = 40
     robot = robo.Snatch3r()
 
@@ -43,11 +43,15 @@ def main():
             #   self.color_sensor = ev3.ColorSensor()
             #   assert self.color_sensor
             # Then here you can use a command like robot.color_sensor.reflected_light_intensity
+            print(robot.color_sensor.color)
+            white_level = robot.color_sensor.color
 
             print("New white level is {}.".format(white_level))
         elif command_to_run == 'b':
             print("Calibrate the black light level")
             # TODO: 3. Read the reflected_light_intensity property of the color sensor and set black_level
+            print(robot.color_sensor.color)
+            black_level = robot.color_sensor.color
 
             print("New black level is {}.".format(black_level))
         elif command_to_run == 'f':
@@ -77,7 +81,12 @@ def follow_the_line(robot, white_level, black_level):
     # TODO: 5. Use the calibrated values for white and black to calculate a light threshold to determine if your robot
     # should drive straight or turn to the right.  You will need to test and refine your code until it works well.
     # Optional extra - For a harder challenge could you drive on the black line and handle left or right turns?
-
+    while True:
+        if  robot.color_sensor.color < 4:
+            robot.forward(300,300)
+        elif robot.color_sensor.color > 4:
+            robot.right(300,300)
+        time.sleep(0.01)
     robot.stop()
     ev3.Sound.speak("Done")
 
