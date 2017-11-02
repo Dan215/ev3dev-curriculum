@@ -34,6 +34,8 @@ class Snatch3r(object):
         self.running = True
         self.color_sensor = ev3.ColorSensor()
         assert self.color_sensor
+        self.ir_sensor = ev3.InfraredSensor()
+        assert self.ir_sensor
 
     def drive_inches(self, inches_target, speed_deg_per_second):
         degrees_per_inch = 90
@@ -178,5 +180,46 @@ class Snatch3r(object):
         self.right_motor.stop()
         self.left_motor.stop()
         self.arm_motor.stop()
+
+    def seek_beacon(robot):
+        beacon_seeker = ev3.BeaconSeeker(channel=1)
+        forward_speed = 300
+        turn_speed = 100
+        while not robot.touch_sensor.is_pressed:
+            current_heading = beacon_seeker.heading  # use the beacon_seeker heading
+            current_distance = beacon_seeker.distance  # use the beacon_seeker distance
+            if current_distance == -128:
+                print("IR Remote not found. Distance is -128")
+                robot.stop()
+            else:
+                if math.fabs(current_heading) < 2:
+                    print("On the right heading. Distance: ", current_distance)
+                    while True:
+                        current_heading = beacon_seeker.heading  # use the beacon_seeker heading
+                        current_distance = beacon_seeker.distance  # use the beacon_seeker distance
+                        if math.fabs(current_heading) > 2:
+                            break
+                        if current_distance > 0:
+                            robot.forward(300, 300)
+                        if current_distance == 0:
+                            time.sleep(0.5)
+                            robot.stop()
+                            return True
+                        time.sleep(0.01)
+                elif math.fabs(current_heading) > 10:
+                    robot.stop()
+                    print('Heading too far off')
+                elif current_heading < 0:
+                    print('turning left')
+                    robot.left(200, 200)
+                elif current_heading > 0:
+                    print('turning right')
+                    robot.right(200, 200)
+
+            time.sleep(0.1)
+        print("Abandon ship!")
+        robot.stop()
+        return False
+
 
 
