@@ -221,5 +221,9 @@ class Snatch3r(object):
         robot.stop()
         return False
 
+    def drive_speed(self,inches_per_second):
+        self.right_motor.run_forever(speed_sp=inches_per_second * 90)
+        self.left_motor.run_forever(speed_sp=inches_per_second * 90)
+
 
 
