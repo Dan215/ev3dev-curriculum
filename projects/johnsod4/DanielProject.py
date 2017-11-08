@@ -11,56 +11,63 @@ import mqtt_remote_method_calls as com
 
 
 def main():
+    global turtleState
+    turtleState = "stop"
     print('Project Testing')
     mqtt_client = com.MqttClient()
+    mqtt_client.connect_to_ev3()
 
     root = tkinter.Tk()
     root.title("MQTT Remote")
 
+    window = rg.TurtleWindow()
+    rob = rg.SimpleTurtle('turtle')
+    rob.pen = rg.Pen('midnight blue', 2)
+
     main_frame = ttk.Frame(root, padding=20, relief='raised')
     main_frame.grid()
-
+    """
     left_speed_label = ttk.Label(main_frame, text="Left")
     left_speed_label.grid(row=0, column=0)
     left_speed_entry = ttk.Entry(main_frame, width=8)
     left_speed_entry.insert(0, "600")
     left_speed_entry.grid(row=1, column=0)
-
-    right_speed_label = ttk.Label(main_frame, text="Right")
-    right_speed_label.grid(row=0, column=2)
-    right_speed_entry = ttk.Entry(main_frame, width=8, justify=tkinter.RIGHT)
-    right_speed_entry.insert(0, "600")
-    right_speed_entry.grid(row=1, column=2)
+    """
+    speed_label = ttk.Label(main_frame, text="Speed")
+    speed_label.grid(row=0, column=1)
+    speed_entry = ttk.Entry(main_frame, width=8, justify=tkinter.RIGHT)
+    speed_entry.insert(0, "600")
+    speed_entry.grid(row=1, column=1)
 
     forward_button = ttk.Button(main_frame, text="Forward")
     forward_button.grid(row=2, column=1)
     # forward_button and '<Up>' key is done for your here...
-    forward_button['command'] = lambda: go_forward(mqtt_client, left_speed_entry, right_speed_entry)
-    root.bind('<Up>', lambda event: go_forward(mqtt_client, left_speed_entry, right_speed_entry))
+    forward_button['command'] = lambda: go_forward(mqtt_client, speed_entry, window, rob)
+    root.bind('<Up>', lambda event: go_forward(mqtt_client, speed_entry, window, rob))
 
     left_button = ttk.Button(main_frame, text="Left")
     left_button.grid(row=3, column=0)
     # left_button and '<Left>' key
-    left_button['command'] = lambda: go_left(mqtt_client, left_speed_entry, right_speed_entry)
-    root.bind('<Left>', lambda event: go_left(mqtt_client, left_speed_entry, right_speed_entry))
+    left_button['command'] = lambda: go_left(mqtt_client, speed_entry, window, rob)
+    root.bind('<Left>', lambda event: go_left(mqtt_client, speed_entry, window, rob))
 
     stop_button = ttk.Button(main_frame, text="Stop")
     stop_button.grid(row=3, column=1)
     # stop_button and '<space>' key (note, does not need left_speed_entry, right_speed_entry)
-    stop_button['command'] = lambda: stop(mqtt_client, left_speed_entry, right_speed_entry)
-    root.bind('<space>', lambda event: stop(mqtt_client, left_speed_entry, right_speed_entry))
+    stop_button['command'] = lambda: stop(mqtt_client)
+    root.bind('<space>', lambda event: stop(mqtt_client))
 
     right_button = ttk.Button(main_frame, text="Right")
     right_button.grid(row=3, column=2)
     # right_button and '<Right>' key
-    right_button['command'] = lambda: go_right(mqtt_client, left_speed_entry, right_speed_entry)
-    root.bind('<Right>', lambda event: go_right(mqtt_client, left_speed_entry, right_speed_entry))
+    right_button['command'] = lambda: go_right(mqtt_client, speed_entry, window, rob)
+    root.bind('<Right>', lambda event: go_right(mqtt_client, speed_entry, window, rob))
 
     back_button = ttk.Button(main_frame, text="Back")
     back_button.grid(row=4, column=1)
     # back_button and '<Down>' key
-    back_button['command'] = lambda: go_backward(mqtt_client, left_speed_entry, right_speed_entry)
-    root.bind('<Down>', lambda event: go_backward(mqtt_client, left_speed_entry, right_speed_entry))
+    back_button['command'] = lambda: go_backward(mqtt_client, speed_entry, window, rob)
+    root.bind('<Down>', lambda event: go_backward(mqtt_client, speed_entry, window, rob))
 
     up_button = ttk.Button(main_frame, text="Up")
     up_button.grid(row=5, column=0)
@@ -81,6 +88,19 @@ def main():
     e_button.grid(row=6, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
 
+    if turtleState == "forward":
+        rob.speed = int(speed_entry.get())
+        rob.forward(1)
+    elif turtleState == "backward":
+        rob.speed = int(speed_entry.get())
+        rob.backward(1)
+    elif turtleState == "right":
+        rob.speed = int(speed_entry.get())
+        rob.right(1)
+    elif turtleState == "left":
+        rob.speed = int(speed_entry.get())
+        rob.left(1)
+
     root.mainloop()
 
 
@@ -95,29 +115,34 @@ def send_down(mqtt_client):
     mqtt_client.send_message("arm_down")
 
 
-def go_forward(mqtt_client, left_speed_entry, right_speed_entry):
+def go_forward(mqtt_client, speed_entry, window, rob):
     print("forward")
-    mqtt_client.send_message("forward", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+    mqtt_client.send_message("forward", [int(speed_entry.get()), int(speed_entry.get())])
+    turtleState = "forward"
 
 
-def go_right(mqtt_client, left_speed_entry, right_speed_entry):
+def go_right(mqtt_client, speed_entry, window, rob):
     print("right")
-    mqtt_client.send_message("right", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+    mqtt_client.send_message("right", [int(speed_entry.get()), int(speed_entry.get())])
+    turtleState = "right"
 
 
-def stop(mqtt_client, left_speed_entry, right_speed_entry):
+def stop(mqtt_client):
     print("stop")
     mqtt_client.send_message("stop")
+    turtleState = "stop"
 
 
-def go_left(mqtt_client, left_speed_entry, right_speed_entry):
+def go_left(mqtt_client, speed_entry, window, rob):
     print("left")
-    mqtt_client.send_message("left", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+    mqtt_client.send_message("left", [int(speed_entry.get()), int(speed_entry.get())])
+    turtleState = "left"
 
 
-def go_backward(mqtt_client, left_speed_entry, right_speed_entry):
+def go_backward(mqtt_client, speed_entry, window, rob):
     print("back")
-    mqtt_client.send_message("back", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+    mqtt_client.send_message("back", [int(speed_entry.get()), int(speed_entry.get())])
+    turtleState = 'backward'
 
 
 # Quit and Exit button callbacks
