@@ -18,14 +18,16 @@ def main():
     beacon_seeker = ev3.BeaconSeeker(channel=1)
     ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
     time.sleep(5)
+    k = 0
     while True:
-        ev3.Sound.speak("beep")
-        time.sleep(2)
+        # ev3.Sound.speak("beep")
+        # time.sleep(2)
         beacon_seeker = ev3.BeaconSeeker(channel=1)
 
         #and math.fabs(beacon_seeker.heading) <= 10
 
         if beacon_seeker.distance > 0:
+            robot.stop()
             ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
             ev3.Sound.speak("mine")
             if robot.seek_beacon():
@@ -42,6 +44,12 @@ def main():
             ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
         if robot.running == False:
             break
+        time.sleep(0.01)
+        k = k + 1
+        if k > 5000:
+            k = 0
+            ev3.Sound.speak("beep")
+
 
 
 

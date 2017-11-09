@@ -185,6 +185,7 @@ class Snatch3r(object):
         beacon_seeker = ev3.BeaconSeeker(channel=1)
         forward_speed = 300
         turn_speed = 100
+        k = 0
         while not robot.touch_sensor.is_pressed:
             current_heading = beacon_seeker.heading  # use the beacon_seeker heading
             current_distance = beacon_seeker.distance  # use the beacon_seeker distance
@@ -196,7 +197,6 @@ class Snatch3r(object):
                 #added
                 break
             else:
-                ev3.Sound.speak("mine")
                 if math.fabs(current_heading) < 2:
                     print("On the right heading. Distance: ", current_distance)
                     while True:
@@ -211,6 +211,10 @@ class Snatch3r(object):
                             robot.stop()
                             return True
                         time.sleep(0.01)
+                        k = k + 1
+                        if k > 1500:
+                            k = 0
+                            ev3.Sound.speak("mine")
                 elif math.fabs(current_heading) > 10:
                     robot.stop()
                     print('Heading too far off')
@@ -220,8 +224,6 @@ class Snatch3r(object):
                 elif current_heading > 0:
                     print('turning right')
                     robot.right(200, 200)
-
-            time.sleep(0.1)
         print("Abandon ship!")
         robot.stop()
         return False
