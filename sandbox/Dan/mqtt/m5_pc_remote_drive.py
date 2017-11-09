@@ -23,6 +23,7 @@ You will need to have the following features:
 You can start by running the code to see the GUI, but don't expect button clicks to do anything useful yet.
 
 Authors: David Fisher and Daniel Johnson.
+
 """  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import tkinter
