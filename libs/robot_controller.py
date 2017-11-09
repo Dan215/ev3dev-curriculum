@@ -190,7 +190,11 @@ class Snatch3r(object):
             current_distance = beacon_seeker.distance  # use the beacon_seeker distance
             if current_distance == -128:
                 print("IR Remote not found. Distance is -128")
+                ev3.Sound.speak("aww I lost the beacon")
                 robot.stop()
+                time.sleep(2)
+                #added
+                break
             else:
                 ev3.Sound.speak("mine")
                 if math.fabs(current_heading) < 2:
