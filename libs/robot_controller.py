@@ -192,6 +192,7 @@ class Snatch3r(object):
                 print("IR Remote not found. Distance is -128")
                 robot.stop()
             else:
+                ev3.Sound.speak("mine")
                 if math.fabs(current_heading) < 2:
                     print("On the right heading. Distance: ", current_distance)
                     while True:
