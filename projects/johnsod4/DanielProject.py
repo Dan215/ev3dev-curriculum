@@ -5,27 +5,33 @@ its starting position.  When a beacon is detected, the robot ignores manual cont
 
 import time
 import tkinter
-from tkinter import ttk
+from tkinter import ttk, HORIZONTAL
 import rosegraphics as rg
 import mqtt_remote_method_calls as com
 
 
 def main():
-    global turtleState
-    turtleState = "stop"
     print('Project Testing')
+    root = tkinter.Tk()
+    root.title("MQTT Remote")
+    main_frame = ttk.Frame(root, padding=5)
+    main_frame.grid()
+    description = "Seagull O' Meter"
+    label = ttk.Label(main_frame, text=description)
+    label.grid(columnspan=2)
+    # canvas = tkinter.Canvas(main_frame, background="lightgray", width=800, height=500)
+    # canvas.grid(columnspan=2)
+    progressbar = ttk.Progressbar(root,orient = HORIZONTAL, length = 100)
+    progressbar.grid(columnspan=10)
+    main_frame = ttk.Frame(root, padding=20, relief='raised')
+    main_frame.grid()
     mqtt_client = com.MqttClient()
     mqtt_client.connect_to_ev3()
 
-    root = tkinter.Tk()
-    root.title("MQTT Remote")
+    #window = rg.TurtleWindow()
+    #rob = rg.SimpleTurtle('turtle')
+    #rob.pen = rg.Pen('midnight blue', 2)
 
-    window = rg.TurtleWindow()
-    rob = rg.SimpleTurtle('turtle')
-    rob.pen = rg.Pen('midnight blue', 2)
-
-    main_frame = ttk.Frame(root, padding=20, relief='raised')
-    main_frame.grid()
     """
     left_speed_label = ttk.Label(main_frame, text="Left")
     left_speed_label.grid(row=0, column=0)
@@ -42,14 +48,14 @@ def main():
     forward_button = ttk.Button(main_frame, text="Forward")
     forward_button.grid(row=2, column=1)
     # forward_button and '<Up>' key is done for your here...
-    forward_button['command'] = lambda: go_forward(mqtt_client, speed_entry, window, rob)
-    root.bind('<Up>', lambda event: go_forward(mqtt_client, speed_entry, window, rob))
+    forward_button['command'] = lambda: go_forward(mqtt_client, speed_entry)
+    root.bind('<Up>', lambda event: go_forward(mqtt_client, speed_entry))
 
     left_button = ttk.Button(main_frame, text="Left")
     left_button.grid(row=3, column=0)
     # left_button and '<Left>' key
-    left_button['command'] = lambda: go_left(mqtt_client, speed_entry, window, rob)
-    root.bind('<Left>', lambda event: go_left(mqtt_client, speed_entry, window, rob))
+    left_button['command'] = lambda: go_left(mqtt_client, speed_entry)
+    root.bind('<Left>', lambda event: go_left(mqtt_client, speed_entry))
 
     stop_button = ttk.Button(main_frame, text="Stop")
     stop_button.grid(row=3, column=1)
@@ -60,14 +66,14 @@ def main():
     right_button = ttk.Button(main_frame, text="Right")
     right_button.grid(row=3, column=2)
     # right_button and '<Right>' key
-    right_button['command'] = lambda: go_right(mqtt_client, speed_entry, window, rob)
-    root.bind('<Right>', lambda event: go_right(mqtt_client, speed_entry, window, rob))
+    right_button['command'] = lambda: go_right(mqtt_client, speed_entry)
+    root.bind('<Right>', lambda event: go_right(mqtt_client, speed_entry))
 
     back_button = ttk.Button(main_frame, text="Back")
     back_button.grid(row=4, column=1)
     # back_button and '<Down>' key
-    back_button['command'] = lambda: go_backward(mqtt_client, speed_entry, window, rob)
-    root.bind('<Down>', lambda event: go_backward(mqtt_client, speed_entry, window, rob))
+    back_button['command'] = lambda: go_backward(mqtt_client, speed_entry)
+    root.bind('<Down>', lambda event: go_backward(mqtt_client, speed_entry))
 
     up_button = ttk.Button(main_frame, text="Up")
     up_button.grid(row=5, column=0)
@@ -87,20 +93,6 @@ def main():
     e_button = ttk.Button(main_frame, text="Exit")
     e_button.grid(row=6, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
-
-    if turtleState == "forward":
-        rob.speed = int(speed_entry.get())
-        rob.forward(1)
-    elif turtleState == "backward":
-        rob.speed = int(speed_entry.get())
-        rob.backward(1)
-    elif turtleState == "right":
-        rob.speed = int(speed_entry.get())
-        rob.right(1)
-    elif turtleState == "left":
-        rob.speed = int(speed_entry.get())
-        rob.left(1)
-
     root.mainloop()
 
 
@@ -115,13 +107,13 @@ def send_down(mqtt_client):
     mqtt_client.send_message("arm_down")
 
 
-def go_forward(mqtt_client, speed_entry, window, rob):
+def go_forward(mqtt_client, speed_entry):
     print("forward")
     mqtt_client.send_message("forward", [int(speed_entry.get()), int(speed_entry.get())])
     turtleState = "forward"
 
 
-def go_right(mqtt_client, speed_entry, window, rob):
+def go_right(mqtt_client, speed_entry):
     print("right")
     mqtt_client.send_message("right", [int(speed_entry.get()), int(speed_entry.get())])
     turtleState = "right"
@@ -133,13 +125,13 @@ def stop(mqtt_client):
     turtleState = "stop"
 
 
-def go_left(mqtt_client, speed_entry, window, rob):
+def go_left(mqtt_client, speed_entry):
     print("left")
     mqtt_client.send_message("left", [int(speed_entry.get()), int(speed_entry.get())])
     turtleState = "left"
 
 
-def go_backward(mqtt_client, speed_entry, window, rob):
+def go_backward(mqtt_client, speed_entry):
     print("back")
     mqtt_client.send_message("back", [int(speed_entry.get()), int(speed_entry.get())])
     turtleState = 'backward'

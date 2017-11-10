@@ -36,6 +36,7 @@ class Snatch3r(object):
         assert self.color_sensor
         self.ir_sensor = ev3.InfraredSensor()
         assert self.ir_sensor
+        self.speakCounter = 0
 
     def drive_inches(self, inches_target, speed_deg_per_second):
         degrees_per_inch = 90
@@ -181,18 +182,18 @@ class Snatch3r(object):
         self.left_motor.stop()
         self.arm_motor.stop()
 
-    def seek_beacon(robot):
+    def seek_beacon(self):
         beacon_seeker = ev3.BeaconSeeker(channel=1)
         forward_speed = 300
         turn_speed = 100
-        k = 0
-        while not robot.touch_sensor.is_pressed:
+        self.speakCounter = 0
+        while not self.touch_sensor.is_pressed:
             current_heading = beacon_seeker.heading  # use the beacon_seeker heading
             current_distance = beacon_seeker.distance  # use the beacon_seeker distance
             if current_distance == -128:
                 print("IR Remote not found. Distance is -128")
                 ev3.Sound.speak("aww I lost the beacon")
-                robot.stop()
+                self.stop()
                 time.sleep(2)
                 #added
                 break
@@ -205,32 +206,34 @@ class Snatch3r(object):
                         if math.fabs(current_heading) > 2:
                             break
                         if current_distance > 0:
-                            robot.forward(300, 300)
+                            self.forward(300, 300)
                         if current_distance == 0:
                             time.sleep(0.5)
-                            robot.stop()
+                            self.stop()
                             return True
                         time.sleep(0.01)
-                        k = k + 1
-                        if k > 1500:
-                            k = 0
-                            ev3.Sound.speak("mine")
+                        self.speakCounter = self.speakCounter + 1
+                        if self.speakCounter > 7500:
+                            ev3.Sound.play("/home/robot/csse120/assets/sounds/mine2.wav")
+                            self.speakCounter = 0
                 elif math.fabs(current_heading) > 10:
-                    robot.stop()
+                    self.stop()
                     print('Heading too far off')
+                    break
                 elif current_heading < 0:
                     print('turning left')
-                    robot.left(200, 200)
+                    self.left(200, 200)
                 elif current_heading > 0:
                     print('turning right')
-                    robot.right(200, 200)
+                    self.right(200, 200)
         print("Abandon ship!")
-        robot.stop()
+        self.stop()
         return False
 
     def drive_speed(self,inches_per_second):
         self.right_motor.run_forever(speed_sp=inches_per_second * 90)
         self.left_motor.run_forever(speed_sp=inches_per_second * 90)
 
-
-
+    def get_distance(self):
+        beacon_seeker = ev3.BeaconSeeker(channel=1)
+        return beacon_seeker.distance

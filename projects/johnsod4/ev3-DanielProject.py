@@ -26,29 +26,33 @@ def main():
 
         #and math.fabs(beacon_seeker.heading) <= 10
 
-        if beacon_seeker.distance > 0:
+        if beacon_seeker.distance > 0 and math.fabs(beacon_seeker.heading) <= 10:
             robot.stop()
             ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
             ev3.Sound.speak("mine")
             if robot.seek_beacon():
+                ev3.Sound.play("/home/robot/csse120/assets/sounds/mine2.wav")
                 robot.arm_up()
-                time.sleep(10)
+                time.sleep(2)
+                ev3.Sound.play("/home/robot/csse120/assets/sounds/mine2.wav")
+                time.sleep(7)
                 robot.arm_down()
                 ev3.Sound.speak("I'm done, good bye")
                 robot.shutdown()
+            robot.stop()
         elif beacon_seeker.distance < 0:
             ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.AMBER)
         elif beacon_seeker.distance > 5:
             ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
         else:
             ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
-        if robot.running == False:
+        if not robot.running:
             break
         time.sleep(0.01)
         k = k + 1
-        if k > 5000:
-            k = 0
+        if k > 50:
             ev3.Sound.speak("beep")
+            k = 0
 
 
 
