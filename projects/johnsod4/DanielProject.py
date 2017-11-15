@@ -1,13 +1,34 @@
 """
-Manually controlled to move around, uses a rosegraphics window to plot its position, with the center of the window being
-its starting position.  When a beacon is detected, the robot ignores manual controls and drives and picks up the beacon.
+Daniel Johnson
+Manually controlled to move around.  When a beacon is detected at any time, the robot ignores manual controls and drives
+to and picks up the beacon, showing a progress bar on how close it is to the beacon.
 """
 
-import time
 import tkinter
 from tkinter import ttk, HORIZONTAL
-import rosegraphics as rg
 import mqtt_remote_method_calls as com
+
+
+class PCDelegate(object):
+    def __init__(self, progressbar, bar_var):
+        self.detect_beacon = False
+        self.original_distance = -1
+        self.percent_travel = 0
+        self.progressbar = progressbar
+        self.bar_var = bar_var
+        self.pre_percent = 0
+
+    def distance_from_beacon(self, current_distance):
+        if not self.detect_beacon:
+            self.detect_beacon = True
+            self.original_distance = current_distance
+        else:
+            self.pre_percent = self.percent_travel
+            self.distance = current_distance
+            self.percent_travel = (1-self.distance/self.original_distance) * 100
+            #some way to have the progressbar value equal self.percent_travel
+            self.bar_var = self.percent_travel
+            self.progressbar.step(self.percent_travel - self.pre_percent)
 
 
 def main():
@@ -19,26 +40,14 @@ def main():
     description = "Seagull O' Meter"
     label = ttk.Label(main_frame, text=description)
     label.grid(columnspan=2)
-    # canvas = tkinter.Canvas(main_frame, background="lightgray", width=800, height=500)
-    # canvas.grid(columnspan=2)
-    progressbar = ttk.Progressbar(root,orient = HORIZONTAL, length = 100)
+    bar_var = 0
+    progressbar = ttk.Progressbar(root,orient = HORIZONTAL, variable = bar_var, length = 100)
     progressbar.grid(columnspan=10)
     main_frame = ttk.Frame(root, padding=20, relief='raised')
     main_frame.grid()
-    mqtt_client = com.MqttClient()
+    my_delegate = PCDelegate(progressbar, bar_var)
+    mqtt_client = com.MqttClient(my_delegate)
     mqtt_client.connect_to_ev3()
-
-    #window = rg.TurtleWindow()
-    #rob = rg.SimpleTurtle('turtle')
-    #rob.pen = rg.Pen('midnight blue', 2)
-
-    """
-    left_speed_label = ttk.Label(main_frame, text="Left")
-    left_speed_label.grid(row=0, column=0)
-    left_speed_entry = ttk.Entry(main_frame, width=8)
-    left_speed_entry.insert(0, "600")
-    left_speed_entry.grid(row=1, column=0)
-    """
     speed_label = ttk.Label(main_frame, text="Speed")
     speed_label.grid(row=0, column=1)
     speed_entry = ttk.Entry(main_frame, width=8, justify=tkinter.RIGHT)

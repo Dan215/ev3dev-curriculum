@@ -14,6 +14,8 @@
 import ev3dev.ev3 as ev3
 import math
 import time
+import mqtt_remote_method_calls as com
+
 
 
 class Snatch3r(object):
@@ -21,8 +23,10 @@ class Snatch3r(object):
 
     # DONE: Implement the Snatch3r class as needed when working the sandox exercises
     # (and delete these comments)
-    def __init__(self):
+    def __init__(self, mqtt_client = None):
         print('robot init')
+        #self.mqtt_client = com.MqttClient()
+        #self.mqtt_client.connect_to_pc()
         self.left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
         self.right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
         self.arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
@@ -198,34 +202,50 @@ class Snatch3r(object):
                 #added
                 break
             else:
+                current_heading = beacon_seeker.heading  # use the beacon_seeker heading
+                current_distance = beacon_seeker.distance  # use the beacon_seeker distance
                 if math.fabs(current_heading) < 2:
-                    print("On the right heading. Distance: ", current_distance)
+                    print("On the right heading. Distance: ", current_distance, "heading: ", current_heading)
                     while True:
+                        self.mqtt_client.send_message("distance_from_beacon", [current_distance])
                         current_heading = beacon_seeker.heading  # use the beacon_seeker heading
                         current_distance = beacon_seeker.distance  # use the beacon_seeker distance
+                        print(current_distance, current_heading)
+                        #because the sensors are @#$%y
+                        if current_heading == 0 and current_distance == 100:
+                            beacon_seeker = ev3.BeaconSeeker(channel=2)
+                            current_heading = beacon_seeker.heading  # use the beacon_seeker heading
+                            current_distance = beacon_seeker.distance  # use the beacon_seeker distance
+                            print('y u no work')
+                            break
                         if math.fabs(current_heading) > 2:
                             break
-                        if current_distance > 0:
+                        elif current_distance > 0:
                             self.forward(300, 300)
-                        if current_distance == 0:
+                        elif current_distance == 0:
+                            #from == 1 and sleep 0.5
                             time.sleep(0.5)
+                            print('Got the beacon')
                             self.stop()
                             return True
-                        time.sleep(0.01)
-                        self.speakCounter = self.speakCounter + 1
-                        if self.speakCounter > 7500:
-                            ev3.Sound.play("/home/robot/csse120/assets/sounds/mine2.wav")
-                            self.speakCounter = 0
+                        else:
+                            break
+                        time.sleep(0.001)
+
+                        #self.speakCounter = self.speakCounter + 1
+                        #if self.speakCounter > 7500:
+                            #ev3.Sound.play("/home/robot/csse120/assets/sounds/mine2.wav")
+                            #self.speakCounter = 0
                 elif math.fabs(current_heading) > 10:
                     self.stop()
                     print('Heading too far off')
                     break
                 elif current_heading < 0:
                     print('turning left')
-                    self.left(200, 200)
+                    self.left(100, 100)
                 elif current_heading > 0:
                     print('turning right')
-                    self.right(200, 200)
+                    self.right(100, 100)
         print("Abandon ship!")
         self.stop()
         return False
@@ -237,3 +257,6 @@ class Snatch3r(object):
     def get_distance(self):
         beacon_seeker = ev3.BeaconSeeker(channel=1)
         return beacon_seeker.distance
+
+    def mqtt_create(self, mqtt_client):
+        self.mqtt_client = mqtt_client

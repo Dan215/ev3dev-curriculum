@@ -1,5 +1,7 @@
 """
-
+Daniel Johnson
+ev3 autonomous portion of the final project.  Tests to see if the beacon is in range and active, then drives towards and picks it up
+If successful, it turns itself off.
 """
 
 import mqtt_remote_method_calls as com
@@ -14,6 +16,7 @@ def main():
     ev3.Sound.speak("this isn't going to WORK, nope nope nooooooooooooooooooooooooooooopppppee")
     mqtt_client = com.MqttClient(robot)
     mqtt_client.connect_to_pc()
+    robot.mqtt_create(mqtt_client)
     robot.running = True
     beacon_seeker = ev3.BeaconSeeker(channel=1)
     ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
@@ -28,12 +31,14 @@ def main():
 
         if beacon_seeker.distance > 0 and math.fabs(beacon_seeker.heading) <= 10:
             robot.stop()
+            time.sleep(3)
+            robot.stop()
             ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
             ev3.Sound.speak("mine")
             if robot.seek_beacon():
                 ev3.Sound.play("/home/robot/csse120/assets/sounds/mine2.wav")
                 robot.arm_up()
-                time.sleep(2)
+                time.sleep(1.5)
                 ev3.Sound.play("/home/robot/csse120/assets/sounds/mine2.wav")
                 time.sleep(7)
                 robot.arm_down()
@@ -41,9 +46,9 @@ def main():
                 robot.shutdown()
             robot.stop()
         elif beacon_seeker.distance < 0:
-            ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.AMBER)
-        elif beacon_seeker.distance > 5:
             ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
+        elif beacon_seeker.distance > 5:
+            ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.AMBER)
         else:
             ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
         if not robot.running:
@@ -53,8 +58,5 @@ def main():
         if k > 50:
             ev3.Sound.speak("beep")
             k = 0
-
-
-
 
 main()
